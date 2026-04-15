@@ -474,10 +474,12 @@
       </div>
       <div id="reader" style="display:none;"></div>
       <div id="manual-area">
-        <div class="manual-row">
-          <input type="text" id="man-name" placeholder="Student Name" list="student-list">
-          <datalist id="student-list"></datalist>
-          <select id="man-house"><option selected disabled>House</option></select>
+        <div class="manual-row" style="display:flex; gap:10px; position:relative; margin-bottom:12px;">
+          <div style="flex:1; position:relative;">
+            <input type="text" id="man-name" placeholder="Student Name" autocomplete="off" style="margin:0; width:100%;">
+            <div id="student-autocomplete" style="position:absolute; top:100%; left:0; right:0; background:#1a1a1a; border:1px solid var(--neon); border-radius:8px; max-height:200px; overflow-y:auto; z-index:1000; display:none; box-shadow:0 4px 20px rgba(0,0,0,0.8); margin-top:4px; text-align:left;"></div>
+          </div>
+          <select id="man-house" style="flex:1; margin:0;"><option selected disabled>House</option></select>
         </div>
         <button class="btn-sub" onclick="submitManual()">✓ SUBMIT MANUALLY</button>
       </div>
@@ -613,16 +615,35 @@
       if (pl) { pl.style.opacity = '0'; setTimeout(() => pl.style.display = 'none', 600); }
       api({ action: "getStudentList" }).then(res => {
         if (res && res.success) {
-          const dl = document.getElementById('student-list');
-          dl.innerHTML = res.students.map(s => `<option value="${s.name}" data-house="${s.house}">`).join('');
-          document.getElementById('man-name').addEventListener('input', (e) => {
-            const val = e.target.value.toUpperCase();
-            const opt = Array.from(dl.options).find(o => o.value.toUpperCase() === val);
-            if (opt && opt.dataset.house) {
-              const hs = document.getElementById('man-house');
-              for (let i = 0; i < hs.options.length; i++) { if (hs.options[i].value === opt.dataset.house) hs.selectedIndex = i; }
-            }
+          const inp = document.getElementById('man-name');
+          const ac = document.getElementById('student-autocomplete');
+          const hs = document.getElementById('man-house');
+          
+          inp.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            ac.innerHTML = '';
+            if (val.length >= 3) {
+              const deptFilter = currentDept === 'Admin' ? null : currentDept;
+              const matches = res.students.filter(s => s.name.toLowerCase().includes(val) && (!deptFilter || !s.dept || s.dept.toLowerCase() === deptFilter.toLowerCase()));
+              if (matches.length > 0) {
+                ac.style.display = 'block';
+                matches.slice(0, 15).forEach(s => {
+                  const div = document.createElement('div');
+                  div.style.padding = '10px 14px'; div.style.cursor = 'pointer'; div.style.borderBottom = '1px solid rgba(255,255,255,0.05)'; div.style.color = '#fff'; div.style.fontSize = '14px';
+                  div.innerHTML = `<span style="font-weight:900;">${s.name}</span> <span style="color:#aaa;font-size:10px;margin-left:6px;">(${s.house})</span>`;
+                  div.onclick = () => {
+                    inp.value = s.name;
+                    for (let i = 0; i < hs.options.length; i++) { if (hs.options[i].value === s.house) hs.selectedIndex = i; }
+                    ac.style.display = 'none';
+                  };
+                  ac.appendChild(div);
+                });
+              } else { ac.style.display = 'none'; }
+            } else { ac.style.display = 'none'; }
           });
+          
+          // Hide when clicking outside
+          document.addEventListener('click', (e) => { if (e.target !== inp && !ac.contains(e.target)) ac.style.display = 'none'; });
         }
       }).catch(() => {});
       selectTier('1st'); // Default selection
@@ -1168,4 +1189,4 @@
     }
   </script>
 </body>
-</h
+</html>
