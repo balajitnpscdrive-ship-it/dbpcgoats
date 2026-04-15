@@ -490,6 +490,7 @@
       </div>
       <!-- ADMIN ACTIONS -->
       <div id="admin-actions" class="admin-section" style="display:none;">
+        <button class="btn-admin" style="color:var(--neon);border:2px solid var(--neon);font-size:14px;padding:16px;" onclick="generateReport()">📊 GENERATE ANNUAL REPORT</button>
         <button class="btn-admin" style="color:var(--accent);border:1px solid var(--accent);" onclick="toggleWebAppForm()">🔗 NEW WEB APP CONNECTION</button>
         <button class="btn-admin" style="color:#00ff88;border:1px solid #00ff88;" onclick="toggleBranding()">🎨 BRANDING DASHBOARD</button>
         <button class="btn-admin" style="color:white;border:1px dashed rgba(255,255,255,0.4);" onclick="prepareBulkPrint()">🖨️ BULK QR SYSTEM (A4)</button>
@@ -516,7 +517,7 @@
     /* ============================================================
        CONFIG
     ============================================================ */
-    const API = "https://script.google.com/macros/s/AKfycbz8CNR1DRuM1a-TkMObxPhwt8S34UniWNUg6Tko8kVESU2Gb_ej73sMcyaQEjLhHJGRCw/exec";
+    const API = "https://script.google.com/macros/s/AKfycbwaKXmmAyaEzt_6q-XoC5_0u612kpPChrQ0av3OKuSWLO_lVhslM_TdEj-6XIyQHIwQMA/exec";
     /* ============================================================
        GLOBAL STATE
     ============================================================ */
@@ -990,6 +991,175 @@
       const pw = window.open('', '_blank');
       pw.document.write(`<!DOCTYPE html><html><head><title>Batch QR</title><style>body{font-family:sans-serif;margin:0;padding:20px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.box{border:1px solid #ddd;padding:10px;text-align:center;page-break-inside:avoid;border-radius:8px}.qr{width:110px;height:110px;margin:5px auto;background:#fff}.lbl{font-size:9px;font-weight:900;text-transform:uppercase;line-height:1.4;margin-top:5px;color:#000}.btn{position:fixed;top:10px;right:10px;padding:12px 24px;background:#000;color:#fbff00;border:none;border-radius:8px;font-weight:900;cursor:pointer}@media print{.btn{display:none}@page{size:A4;margin:1cm}}</style></head><body><button class="btn" onclick="window.print()">PRINT A4 SHEET</button><div class="grid" id="g"></div><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script><script>function gen(){const ss=${JSON.stringify(res.students)},g=document.getElementById('g');if(typeof QRCode==='undefined'){setTimeout(gen,100);return;}ss.forEach(s=>{const b=document.createElement('div');b.className='box';const q=document.createElement('div');q.className='qr';const l=document.createElement('div');l.className='lbl';l.innerHTML=(s.name||'')+'<br>'+(s.dept||'')+' | '+(s.house||'');b.appendChild(q);b.appendChild(l);g.appendChild(b);try{new QRCode(q,{text:(s.name||'')+' | '+(s.dept||'')+' | '+(s.house||''),width:110,height:110});}catch(e){}});}gen();<\/script></body></html>`);
       pw.document.close();
+    }
+    /* ============================================================
+       📊 ANNUAL REPORT GENERATOR — Print-Ready
+    ============================================================ */
+    async function generateReport() {
+      showToast("📊 Generating Report...");
+      try {
+        const res = await api({ action: "getReportData" });
+        if (!res.success) { showToast("❌ Report failed: " + (res.error || '')); return; }
+        const { overall, categoryResults, departments, houseConfig, categoryNames, images } = res;
+        const logoUrl = images.logo || '';
+        const rankLabels = ['🏆 WINNER', '🥈 RUNNER UP', '🥉 2ND RUNNER UP', '4TH PLACE'];
+        const rankColors = ['#d4af37', '#c0c0c0', '#cd7f32', '#888'];
+        const today = new Date().toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' });
+        const hColors = {};
+        houseConfig.forEach(h => hColors[h.name] = h.color);
+        // Helper: build a standings table
+        function standingsTable(arr, title) {
+          let html = `<div class="section-title">${title}</div><table class="standings"><tr><th>RANK</th><th>HOUSE</th><th>POINTS</th></tr>`;
+          arr.forEach(([name, pts], i) => {
+            const bg = i === 0 ? 'rgba(212,175,55,0.15)' : i === 1 ? 'rgba(192,192,192,0.10)' : i === 2 ? 'rgba(205,127,50,0.10)' : '';
+            html += `<tr style="background:${bg}"><td class="rank-cell"><span style="color:${rankColors[i]||'#888'};font-weight:900;">${rankLabels[i]||(i+1)}</span></td><td><span class="house-dot" style="background:${hColors[name]||'#888'}"></span>${name}</td><td class="pts-cell">${pts}</td></tr>`;
+          });
+          html += '</table>';
+          return html;
+        }
+        // Helper: compact category row
+        function catRow(catName, arr) {
+          let row = `<tr><td class="cat-name">${catName}</td>`;
+          arr.forEach(([name, pts], i) => {
+            const icon = i === 0 ? '🏆' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+            row += `<td>${icon} ${name} <b>(${pts})</b></td>`;
+          });
+          for (let i = arr.length; i < 4; i++) row += '<td>—</td>';
+          row += '</tr>';
+          return row;
+        }
+        // ===== BUILD PAGE 1: OVERALL =====
+        let page1 = `
+          <div class="page">
+            <div class="report-header">
+              ${logoUrl ? `<img src="${logoUrl}" class="college-logo">` : ''}
+              <div class="college-name">DON BOSCO POLYTECHNIC COLLEGE</div>
+              <div class="college-sub">Givers of All Talents Students</div>
+              <div class="report-title">G.O.A.T.S CHAMPIONSHIP — ANNUAL REPORT</div>
+              <div class="report-date">${today}</div>
+            </div>
+            ${standingsTable(overall, '🏆 OVERALL HOUSE CHAMPIONSHIP')}
+            <div class="section-title">📊 CATEGORY WISE RESULTS</div>
+            <table class="cat-table">
+              <tr><th>CATEGORY</th><th>🏆 WINNER</th><th>🥈 RUNNER</th><th>🥉 2ND RUNNER</th><th>4TH</th></tr>
+              ${categoryNames.map(c => catRow(c, categoryResults[c] || [])).join('')}
+            </table>
+            <div class="signature-area">
+              <div class="sig-line"></div>
+              <div class="sig-label">PRINCIPAL</div>
+              <div class="sig-sub">Don Bosco Polytechnic College</div>
+            </div>
+          </div>`;
+        // ===== BUILD DEPARTMENT PAGES =====
+        let deptPages = '';
+        const deptNames = Object.keys(departments).sort();
+        deptNames.forEach(deptName => {
+          const d = departments[deptName];
+          deptPages += `
+          <div class="page">
+            <div class="report-header">
+              ${logoUrl ? `<img src="${logoUrl}" class="college-logo-sm">` : ''}
+              <div class="college-name" style="font-size:18px;">DON BOSCO POLYTECHNIC COLLEGE</div>
+              <div class="college-sub">Givers of All Talents Students</div>
+              <div class="dept-title">DEPARTMENT OF ${deptName.toUpperCase()}</div>
+              <div class="report-date">${today}</div>
+            </div>
+            ${standingsTable(d.houses, '🏆 HOUSE STANDINGS — ' + deptName.toUpperCase())}
+            <div class="section-title">📊 CATEGORY BREAKDOWN</div>
+            <table class="cat-table">
+              <tr><th>CATEGORY</th><th>🏆 WINNER</th><th>🥈 RUNNER</th><th>🥉 2ND RUNNER</th><th>4TH</th></tr>
+              ${categoryNames.map(c => catRow(c, d.categories[c] || [])).join('')}
+            </table>
+            ${d.toppers.length > 0 ? `
+            <div class="section-title">⭐ TOP CONTRIBUTORS</div>
+            <table class="toppers">
+              <tr><th>#</th><th>STUDENT NAME</th><th>POINTS</th></tr>
+              ${d.toppers.slice(0,10).map(([name, pts], i) => `<tr><td>${i+1}</td><td>${name}</td><td class="pts-cell">${pts}</td></tr>`).join('')}
+            </table>` : ''}
+            <div class="signature-area">
+              <div style="display:flex;justify-content:space-between;gap:40px;">
+                <div style="text-align:center;flex:1;">
+                  <div class="sig-line"></div>
+                  <div class="sig-label">HEAD OF DEPARTMENT</div>
+                  <div class="sig-sub">${deptName}</div>
+                </div>
+                <div style="text-align:center;flex:1;">
+                  <div class="sig-line"></div>
+                  <div class="sig-label">PRINCIPAL</div>
+                  <div class="sig-sub">Don Bosco Polytechnic College</div>
+                </div>
+              </div>
+            </div>
+          </div>`;
+        });
+        // ===== OPEN PRINT WINDOW =====
+        const pw = window.open('', '_blank');
+        pw.document.write(`<!DOCTYPE html><html><head><title>G.O.A.T.S Annual Report</title>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+        <style>
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          body { font-family: 'Poppins', sans-serif; background: #fff; color: #111; padding: 0; }
+          .page {
+            width: 210mm; min-height: 290mm; margin: 0 auto; padding: 20mm 18mm;
+            page-break-after: always; position: relative;
+          }
+          .page:last-child { page-break-after: auto; }
+          .print-btn {
+            position: fixed; top: 16px; right: 16px; z-index: 999;
+            padding: 14px 32px; background: #111; color: #fbff00;
+            border: none; border-radius: 10px; font-weight: 900;
+            font-size: 14px; cursor: pointer; letter-spacing: 1px;
+          }
+          /* HEADER */
+          .report-header { text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 3px double #333; }
+          .college-logo { width: 70px; height: 70px; object-fit: contain; margin-bottom: 6px; }
+          .college-logo-sm { width: 50px; height: 50px; object-fit: contain; margin-bottom: 4px; }
+          .college-name { font-size: 22px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
+          .college-sub { font-size: 11px; color: #666; letter-spacing: 3px; text-transform: uppercase; margin: 2px 0; }
+          .report-title { font-size: 16px; font-weight: 900; color: #b8860b; letter-spacing: 2px; margin-top: 8px; }
+          .dept-title { font-size: 16px; font-weight: 900; color: #333; letter-spacing: 2px; margin-top: 6px; border: 2px solid #333; display: inline-block; padding: 4px 20px; border-radius: 6px; }
+          .report-date { font-size: 10px; color: #999; margin-top: 6px; }
+          /* SECTION */
+          .section-title { font-size: 13px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: #333; margin: 20px 0 10px; padding: 6px 12px; background: #f5f5f5; border-left: 4px solid #d4af37; border-radius: 4px; }
+          /* STANDINGS TABLE */
+          .standings { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+          .standings th { background: #111; color: #fbff00; padding: 10px 14px; text-align: left; font-size: 11px; letter-spacing: 2px; }
+          .standings td { padding: 12px 14px; border-bottom: 1px solid #eee; font-size: 14px; }
+          .standings .rank-cell { width: 180px; }
+          .standings .pts-cell { font-weight: 900; font-size: 18px; text-align: right; }
+          .house-dot { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; vertical-align: middle; }
+          /* CATEGORY TABLE */
+          .cat-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11px; }
+          .cat-table th { background: #222; color: #fff; padding: 8px 10px; text-align: left; font-size: 10px; letter-spacing: 1px; }
+          .cat-table td { padding: 8px 10px; border-bottom: 1px solid #eee; }
+          .cat-table .cat-name { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; background: #fafafa; }
+          .cat-table b { color: #333; }
+          /* TOPPERS TABLE */
+          .toppers { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+          .toppers th { background: #1a5e1a; color: white; padding: 8px 12px; text-align: left; font-size: 10px; letter-spacing: 1px; }
+          .toppers td { padding: 8px 12px; border-bottom: 1px solid #eee; font-size: 12px; }
+          .toppers .pts-cell { font-weight: 900; text-align: right; }
+          /* SIGNATURE */
+          .signature-area { margin-top: 40px; padding-top: 10px; }
+          .sig-line { width: 200px; border-bottom: 1px solid #333; margin: 0 auto 6px; }
+          .sig-label { font-weight: 900; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; text-align: center; }
+          .sig-sub { font-size: 10px; color: #888; text-align: center; }
+          @media print {
+            .print-btn { display: none !important; }
+            @page { size: A4; margin: 10mm; }
+            .page { padding: 15mm 14mm; width: auto; min-height: auto; }
+          }
+        </style>
+        </head><body>
+          <button class="print-btn" onclick="window.print()">🖨️ PRINT REPORT</button>
+          ${page1}
+          ${deptPages}
+        </body></html>`);
+        pw.document.close();
+        showToast("✅ Report generated!");
+      } catch (e) {
+        showToast("❌ Error: " + e.message);
+      }
     }
   </script>
 </body>
