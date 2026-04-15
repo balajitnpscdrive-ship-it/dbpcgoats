@@ -12,7 +12,7 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     /* =======================
-       GLOBAL VARIABLES 
+       GLOBAL VARIABLES
        ======================= */
     :root {
       --neon: #fbff00;
@@ -20,13 +20,11 @@
       --green: #00ff88;
       --red: #ff416c;
       --bg: #050508;
+      --gold: #d4af37;
+      --silver: #c0c0c0;
+      --bronze: #cd7f32;
     }
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
     body {
       font-family: 'Poppins', sans-serif;
       background: var(--bg);
@@ -35,684 +33,319 @@
       overflow-x: hidden;
     }
     /* =======================
-       PRELOADER & OVERLAYS 
+       PRELOADER
        ======================= */
     .preloader {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #050508;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: #050508; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
       transition: opacity 0.6s ease;
     }
-    .loader-pulse {
-      animation: pulseLogo 0.8s infinite alternate;
-    }
+    .loader-pulse { animation: pulseLogo 0.8s infinite alternate; }
     @keyframes pulseLogo {
       from { transform: scale(0.9); filter: drop-shadow(0 0 10px rgba(251,255,0,0)); }
       to { transform: scale(1.1); filter: drop-shadow(0 0 20px var(--neon)); }
     }
     .bg-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      z-index: -1;
-      background-size: cover;
-      background-position: center;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;
+      background-size: cover; background-position: center;
       filter: brightness(0.2) blur(6px);
     }
     /* =======================
-       HEADER SECTION 
+       HEADER
        ======================= */
     .header {
       padding: calc(10px + env(safe-area-inset-top)) 14px 12px;
-      display: grid;
-      grid-template-columns: 60px 1fr 60px;
-      align-items: center;
-      gap: 8px;
+      display: grid; grid-template-columns: 60px 1fr 60px;
+      align-items: center; gap: 8px;
       background: rgba(0,0,0,0.9);
       border-bottom: 1px solid rgba(255,255,255,0.08);
-      position: sticky;
-      top: 0;
-      z-index: 100;
+      position: sticky; top: 0; z-index: 100;
     }
-    .logo-img {
-      width: 54px;
-      height: 54px;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-    .founder-img {
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      border: 2px solid var(--neon);
-      object-fit: cover;
-      justify-self: end;
-    }
-    .header-title {
-      text-align: center;
-    }
-    .header-title h1 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 16px;
-      letter-spacing: 2px;
-      color: white;
-      line-height: 1.2;
-    }
-    .header-title p {
-      font-size: 8px;
-      color: var(--neon);
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-top: 2px;
-      opacity: .9;
-    }
-    .header-title small {
-      font-size: 7.5px;
-      color: rgba(255,255,255,0.35);
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      display: block;
-    }
+    .logo-img { width: 54px; height: 54px; object-fit: contain; border-radius: 8px; }
+    .founder-img { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--neon); object-fit: cover; justify-self: end; }
+    .header-title { text-align: center; }
+    .header-title h1 { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 2px; color: white; line-height: 1.2; }
+    .header-title p { font-size: 8px; color: var(--neon); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; opacity: .9; }
+    .header-title small { font-size: 7.5px; color: rgba(255,255,255,0.35); letter-spacing: 1px; text-transform: uppercase; display: block; }
     /* =======================
-       WIFI SYNC STATUS 
+       SYNC STATUS
        ======================= */
     #sync-status {
-      position: fixed;
-      bottom: 12px;
-      right: 12px;
-      font-size: 8px;
-      font-weight: 900;
-      text-transform: uppercase;
-      padding: 4px 8px;
-      border-radius: 20px;
-      background: rgba(0,0,0,0.8);
-      border: 1px solid rgba(255,255,255,0.08);
-      z-index: 200;
+      position: fixed; bottom: 12px; right: 12px;
+      font-size: 8px; font-weight: 900; text-transform: uppercase;
+      padding: 4px 8px; border-radius: 20px;
+      background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.08); z-index: 200;
     }
     .status-live { color: var(--green) !important; border-color: rgba(0,255,136,.3) !important; }
     .status-offline { color: var(--red) !important; border-color: rgba(255,65,108,.3) !important; }
     /* =======================
-       DEPARTMENT CARDS GRID 
+       DEPARTMENT GRID
        ======================= */
-    #dept-gate {
-      padding: 20px 14px;
-      max-width: 900px;
-      margin: auto;
-    }
-    .gate-title {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 26px;
-      letter-spacing: 3px;
-      color: rgba(255,255,255,0.4);
-      text-align: center;
-      margin-bottom: 20px;
-      text-shadow: 0 4px 10px rgba(0,0,0,0.8);
-    }
-    .dept-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-      gap: 12px;
-    }
+    #dept-gate { padding: 20px 14px; max-width: 900px; margin: auto; }
+    .gate-title { font-family: 'Bebas Neue', sans-serif; font-size: 26px; letter-spacing: 3px; color: rgba(255,255,255,0.4); text-align: center; margin-bottom: 20px; }
+    .dept-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; }
     .dept-card {
-      background: rgba(20,20,25,0.95);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 16px;
-      padding: 22px 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: transform 0.15s;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+      background: rgba(20,20,25,0.95); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 16px; padding: 22px 10px; text-align: center; cursor: pointer;
+      transition: transform 0.15s; box-shadow: 0 8px 30px rgba(0,0,0,0.6);
     }
-    .dept-card:active {
-      transform: scale(0.92);
-      box-shadow: 0 0 20px rgba(251,255,0,.3);
-    }
-    .dept-card-icon {
-      font-size: 32px;
-      margin-bottom: 8px;
-    }
-    .dept-card b {
-      display: block;
-      font-size: 13px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      line-height: 1.2;
-      width: 100%;
-      word-wrap: break-word;
-    }
-    .dept-card-bar {
-      height: 3px;
-      background: linear-gradient(90deg, var(--neon), var(--accent));
-      border-radius: 3px;
-      margin: 10px auto 0;
-      width: 80%;
-      opacity: .8;
-    }
+    .dept-card:active { transform: scale(0.92); box-shadow: 0 0 20px rgba(251,255,0,.3); }
+    .dept-card-icon { font-size: 32px; margin-bottom: 8px; }
+    .dept-card b { display: block; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; word-wrap: break-word; }
+    .dept-card-bar { height: 3px; background: linear-gradient(90deg, var(--neon), var(--accent)); border-radius: 3px; margin: 10px auto 0; width: 80%; opacity: .8; }
     /* =======================
-       LOGIN MODAL 
+       LOGIN MODAL
        ======================= */
     #login-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(20px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 20px;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.92); backdrop-filter: blur(20px);
+      display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;
     }
     .modal-box {
-      background: rgba(20,20,25,1);
-      border: 1px solid rgba(251,255,0,.4);
-      border-radius: 24px;
-      padding: 32px 24px;
-      width: 100%;
-      max-width: 360px;
-      text-align: center;
-      box-shadow: 0 0 60px rgba(251,255,0,.15);
+      background: rgba(20,20,25,1); border: 1px solid rgba(251,255,0,.4);
+      border-radius: 24px; padding: 32px 24px; width: 100%; max-width: 360px;
+      text-align: center; box-shadow: 0 0 60px rgba(251,255,0,.15);
     }
-    .modal-box h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 26px;
-      color: var(--neon);
-      letter-spacing: 3px;
-      margin-bottom: 20px;
+    .modal-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--neon); letter-spacing: 3px; margin-bottom: 20px; }
+    input, select, textarea {
+      width: 100%; padding: 14px 16px; margin: 8px 0;
+      background: rgba(255,255,255,0.06); color: white;
+      border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+      font-size: 16px; font-family: inherit; transition: border-color 0.2s;
     }
-    input, select {
-      width: 100%;
-      padding: 14px 16px;
-      margin: 8px 0;
-      background: rgba(255,255,255,0.06);
-      color: white;
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 12px;
-      font-size: 16px;
-      font-family: inherit;
-      transition: border-color 0.2s;
-    }
-    input:focus, select:focus {
-      border-color: var(--neon);
-      outline: none;
-      background: rgba(251,255,0,.08);
-    }
+    input:focus, select:focus, textarea:focus { border-color: var(--neon); outline: none; background: rgba(251,255,0,.08); }
+    textarea { resize: none; min-height: 50px; font-size: 14px; }
     .btn-main {
-      width: 100%;
-      padding: 16px;
-      border-radius: 12px;
-      background: var(--neon);
-      color: black;
-      font-weight: 900;
-      border: none;
-      cursor: pointer;
-      font-family: 'Bebas Neue', sans-serif;
-      letter-spacing: 2px;
-      font-size: 18px;
-      margin-top: 5px;
+      width: 100%; padding: 16px; border-radius: 12px; background: var(--neon);
+      color: black; font-weight: 900; border: none; cursor: pointer;
+      font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 18px; margin-top: 5px;
     }
     /* =======================
-       TEACHER VIEW LOGIC 
+       TEACHER VIEW
        ======================= */
-    #teacher-view {
-      max-width: 600px;
-      margin: auto;
-      padding-bottom: 40px;
-    }
-    .scoreboard {
-      padding: 16px;
-      background: rgba(0,0,0,0.85);
-      border-bottom: 1px solid rgba(255,255,255,0.07);
-    }
-    .sb-label {
-      font-size: 9px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: 10px;
-      text-align: center;
-    }
-    .score-strip {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 4px;
-    }
-    .score-chip {
-      flex: 0 0 auto;
-      min-width: 80px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 14px;
-      padding: 10px 14px;
-      text-align: center;
-      border-top: 3px solid #333;
-      position: relative;
-    }
-    .score-chip.leader {
-      box-shadow: 0 0 20px var(--chip-color, #888);
-    }
-    .chip-name {
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.6);
-    }
-    .chip-score {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 32px;
-      line-height: 1.1;
-      color: white;
-    }
-    .chip-rank {
-      font-size: 14px;
-      position: absolute;
-      top: -8px;
-      right: -4px;
-    }
+    #teacher-view { max-width: 600px; margin: auto; padding-bottom: 40px; }
+    .scoreboard { padding: 16px; background: rgba(0,0,0,0.85); border-bottom: 1px solid rgba(255,255,255,0.07); }
+    .sb-label { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 10px; text-align: center; }
+    .score-strip { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
+    .score-chip { flex: 0 0 auto; min-width: 80px; background: rgba(255,255,255,0.04); border-radius: 14px; padding: 10px 14px; text-align: center; border-top: 3px solid #333; position: relative; }
+    .score-chip.leader { box-shadow: 0 0 20px var(--chip-color, #888); }
+    .chip-name { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
+    .chip-score { font-family: 'Bebas Neue', sans-serif; font-size: 32px; line-height: 1.1; color: white; }
+    .chip-rank { font-size: 14px; position: absolute; top: -8px; right: -4px; }
     .t-panel {
-      margin: 16px;
-      background: rgba(10,10,18,0.9);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 16px 14px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+      margin: 16px; background: rgba(10,10,18,0.9);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+      padding: 16px 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.7);
     }
-    .mode-toggle {
-      display: flex;
-      gap: 8px;
+    /* =======================
+       🏅 MEDAL TIER SELECTOR
+       ======================= */
+    .medal-section {
       margin-bottom: 16px;
-      background: rgba(255,255,255,0.04);
-      border-radius: 14px;
-      padding: 4px;
     }
-    .mode-btn {
-      flex: 1;
-      padding: 14px 4px;
-      border-radius: 11px;
-      border: none;
-      cursor: pointer;
-      background: transparent;
-      color: rgba(255,255,255,0.3);
-      font-family: 'Bebas Neue', sans-serif;
-      letter-spacing: 2px;
-      font-size: 16px;
+    .medal-section-label {
+      font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); text-align: center; margin-bottom: 12px;
     }
-    .mode-btn.active-pos {
+    .medal-row {
+      display: flex; gap: 8px; justify-content: center; align-items: flex-end; margin-bottom: 8px;
+    }
+    .medal-btn {
+      position: relative; border: none; cursor: pointer;
+      border-radius: 50%; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; color: #000;
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+    .medal-btn:active { transform: scale(0.88) !important; }
+    .medal-btn .medal-icon { font-size: 28px; line-height: 1; }
+    .medal-btn .medal-pts {
+      font-size: 11px; font-weight: 900; letter-spacing: 1px;
+      margin-top: 2px; opacity: 0.8;
+    }
+    .medal-btn .medal-label {
+      font-size: 8px; font-weight: 900; letter-spacing: 1px;
+      text-transform: uppercase; opacity: 0.6;
+    }
+    /* 1ST PLACE — Gold, largest */
+    .medal-1st {
+      width: 90px; height: 90px;
+      background: linear-gradient(145deg, #ffd700, #b8860b, #ffd700);
+      animation: medalFloat 3s ease-in-out infinite;
+    }
+    .medal-1st.selected {
+      box-shadow: 0 0 30px rgba(255,215,0,0.7), 0 0 60px rgba(255,215,0,0.3);
+      transform: scale(1.1);
+    }
+    /* 2ND PLACE — Silver */
+    .medal-2nd {
+      width: 76px; height: 76px;
+      background: linear-gradient(145deg, #e8e8e8, #a0a0a0, #e0e0e0);
+      animation: medalFloat 3.2s ease-in-out 0.3s infinite;
+    }
+    .medal-2nd.selected {
+      box-shadow: 0 0 25px rgba(192,192,192,0.7), 0 0 50px rgba(192,192,192,0.3);
+      transform: scale(1.1);
+    }
+    /* 3RD PLACE — Bronze */
+    .medal-3rd {
+      width: 76px; height: 76px;
+      background: linear-gradient(145deg, #e8a060, #8b4513, #cd7f32);
+      animation: medalFloat 3.4s ease-in-out 0.6s infinite;
+    }
+    .medal-3rd.selected {
+      box-shadow: 0 0 25px rgba(205,127,50,0.7), 0 0 50px rgba(205,127,50,0.3);
+      transform: scale(1.1);
+    }
+    /* INDIVIDUAL — Green/Neon star */
+    .medal-individual {
+      width: 68px; height: 68px; border-radius: 14px;
       background: linear-gradient(135deg, #00b09b, #00ff88);
-      color: black;
-      box-shadow: 0 4px 20px rgba(0,255,136,.3);
+      color: #000 !important;
+      animation: medalFloat 3.5s ease-in-out 0.9s infinite;
     }
-    .mode-btn.active-neg {
+    .medal-individual.selected {
+      box-shadow: 0 0 25px rgba(0,255,136,0.7), 0 0 50px rgba(0,255,136,0.3);
+      transform: scale(1.1);
+    }
+    .medal-individual .medal-icon { font-size: 22px; }
+    .medal-individual .medal-pts { font-size: 11px; }
+    /* DEDUCT — Red */
+    .medal-deduct {
+      width: 68px; height: 68px; border-radius: 14px;
       background: linear-gradient(135deg, #ff416c, #ff4b2b);
-      color: white;
-      box-shadow: 0 4px 20px rgba(255,65,108,.3);
+      color: white !important;
     }
-    .house-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 16px;
+    .medal-deduct.selected {
+      box-shadow: 0 0 25px rgba(255,65,108,0.7);
+      transform: scale(1.1);
     }
+    .medal-deduct .medal-icon { font-size: 20px; }
+    .medal-deduct .medal-pts { color: white; font-size: 10px; }
+    @keyframes medalFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
+    }
+    .medal-btn.selected { animation: none !important; }
+    /* Medal stamp animation on click */
+    @keyframes medalStamp {
+      0% { transform: scale(1); }
+      30% { transform: scale(0.85) rotate(-3deg); }
+      60% { transform: scale(1.15) rotate(2deg); }
+      100% { transform: scale(1.1); }
+    }
+    .medal-stamp { animation: medalStamp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important; }
+    /* Active tier indicator */
+    .tier-indicator {
+      text-align: center; font-size: 11px; font-weight: 900;
+      letter-spacing: 2px; text-transform: uppercase;
+      padding: 8px; border-radius: 10px; margin-bottom: 16px;
+      background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.3);
+      color: var(--gold); transition: all 0.3s;
+    }
+    .tier-indicator.negative {
+      background: rgba(255,65,108,0.1); border-color: rgba(255,65,108,0.3); color: var(--red);
+    }
+    /* =======================
+       HOUSE BUTTONS
+       ======================= */
+    .house-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
     .house-btn {
-      padding: 28px 4px;
-      border-radius: 16px;
-      border: none;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 2px;
-      color: black;
-      cursor: pointer;
-      position: relative;
+      padding: 28px 4px; border-radius: 16px; border: none;
+      font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
+      color: black; cursor: pointer; position: relative;
     }
-    .house-btn:active {
-      transform: scale(0.94);
-    }
-    .scan-area {
-      text-align: center;
-      margin-bottom: 14px;
-    }
+    .house-btn:active { transform: scale(0.94); }
+    .scan-area { text-align: center; margin-bottom: 14px; }
     #cam-btn {
       background: linear-gradient(135deg, var(--neon), #e8ff00);
-      border: none;
-      padding: 0;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      font-size: 30px;
-      cursor: pointer;
+      border: none; padding: 0; width: 80px; height: 80px;
+      border-radius: 50%; font-size: 30px; cursor: pointer;
     }
-    .scan-hint {
-      font-size: 10px;
-      color: rgba(255,255,255,0.3);
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 8px;
-    }
-    #reader {
-      border-radius: 16px;
-      overflow: hidden;
-      border: 2px solid var(--neon);
-      margin-bottom: 14px;
-    }
-    .manual-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
+    .scan-hint { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 2px; text-transform: uppercase; margin-top: 8px; }
+    #reader { border-radius: 16px; overflow: hidden; border: 2px solid var(--neon); margin-bottom: 14px; }
+    .manual-row { display: flex; gap: 8px; margin-bottom: 6px; }
     .btn-sub {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: white;
-      padding: 14px;
-      border-radius: 12px;
-      font-weight: 900;
-      cursor: pointer;
-      width: 100%;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      color: white; padding: 14px; border-radius: 12px; font-weight: 900;
+      cursor: pointer; width: 100%; margin-bottom: 14px; letter-spacing: 1px;
+    }
+    /* Remarks field */
+    .remarks-wrap {
       margin-bottom: 14px;
-      letter-spacing: 1px;
+    }
+    .remarks-label {
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.3); margin-bottom: 4px;
     }
     /* =======================
-       ADMIN ACTIONS DASHBOARD 
+       ADMIN ACTIONS
        ======================= */
-    .admin-section {
-      margin-top: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .btn-admin {
-      padding: 14px 10px;
-      border-radius: 12px;
-      background: transparent;
-      font-weight: 900;
-      cursor: pointer;
-      font-size: 12px;
-      letter-spacing: 1px;
-      font-family: inherit;
-    }
-    .upload-box {
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.1);
-      padding: 12px 14px;
-      border-radius: 12px;
-      margin-bottom: 8px;
-    }
-    .upload-box label {
-      font-size: 10px;
-      color: var(--accent);
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-    }
+    .admin-section { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .btn-admin { padding: 14px 10px; border-radius: 12px; background: transparent; font-weight: 900; cursor: pointer; font-size: 12px; letter-spacing: 1px; font-family: inherit; }
+    .upload-box { background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); padding: 12px 14px; border-radius: 12px; margin-bottom: 8px; }
+    .upload-box label { font-size: 10px; color: var(--accent); display: block; margin-bottom: 6px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
     .btn-logout {
-      width: calc(100% - 32px);
-      margin: 16px;
-      padding: 14px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 12px;
-      color: rgba(255,255,255,0.7);
-      font-weight: 600;
-      cursor: pointer;
-      letter-spacing: 1px;
+      width: calc(100% - 32px); margin: 16px; padding: 14px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px; color: rgba(255,255,255,0.7); font-weight: 600;
+      cursor: pointer; letter-spacing: 1px;
     }
     /* =======================
-       LEADERBOARD MODAL 
+       LEADERBOARD MODAL
        ======================= */
     #lb-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: #050508;
-      flex-direction: column;
-      z-index: 3000;
-      overflow-x: hidden;
-      overflow-y: auto;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: #050508; flex-direction: column; z-index: 3000;
+      overflow-x: hidden; overflow-y: auto;
     }
     .lb-header {
-      padding: 16px;
-      background: rgba(0,0,0,1);
+      padding: 16px; background: rgba(0,0,0,1);
       border-bottom: 1px solid rgba(255,255,255,0.1);
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 10;
     }
-    .lb-header h2 {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      letter-spacing: 2px;
-      flex: 1;
-    }
-    .lb-back {
-      background: rgba(255,255,255,0.15);
-      border: none;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 13px;
-    }
-    .lb-period-toggle {
-      display: flex;
-      gap: 10px;
-      padding: 16px 16px 4px 16px;
-    }
-    .period-btn {
-      flex: 1;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: rgba(255,255,255,0.8);
-      padding: 10px 4px;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: 900;
-      font-size: 11px;
-    }
-    .period-btn.active {
-      background: var(--neon);
-      color: black;
-      border-color: var(--neon);
-      box-shadow: 0 0 15px rgba(251,255,0,0.2);
-    }
-    /* FIXED FILTER BUTTONS */
-    .lb-filters {
-      display: flex;
-      gap: 12px;
-      padding: 16px 16px 20px 16px;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      overflow-x: auto;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      flex-wrap: nowrap;
-      -webkit-overflow-scrolling: touch;
-    }
-    .lb-filters::-webkit-scrollbar {
-      display: none;
-    }
-    .lb-filter-btn {
-      -webkit-appearance: none;
-      appearance: none;
-      background: rgba(255,255,255,0.15);
-      border: 1px solid rgba(255,255,255,0.4);
-      color: #ffffff;
-      padding: 12px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 900;
-      flex-shrink: 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      line-height: normal;
-      min-height: 44px;
-    }
-    .lb-filter-btn.active {
-      background: var(--accent);
-      color: #000000;
-      border-color: var(--accent);
-      box-shadow: 0 0 15px rgba(0,212,255,0.5);
-    }
-    .lb-body {
-      padding: 20px 14px;
-    }
-    .lb-podium {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 24px;
-      align-items: flex-end;
-      justify-content: center;
-    }
-    .lb-podium-item {
-      text-align: center;
-      flex: 1;
-      max-width: 90px;
-    }
-    .lb-podium-bar {
-      border-radius: 10px 10px 0 0;
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      padding-bottom: 8px;
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 20px;
-      color: rgba(0,0,0,0.8);
-      min-height: 36px;
-      transform: scaleY(0);
-      transform-origin: bottom;
-      transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .lb-podium-name {
-      font-size: 10px;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin-top: 6px;
-      color: rgba(255,255,255,1);
-    }
-    .lb-podium-score {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 18px;
-      color: var(--neon);
-    }
-    .lb-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px;
-      background: rgba(255,255,255,0.06);
-      border-radius: 12px;
-      margin-bottom: 10px;
-      border-left: 4px solid #333;
-    }
-    .lb-row-rank {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 20px;
-      color: rgba(255,255,255,0.5);
-      width: 26px;
-      text-align: center;
-    }
-    .lb-row-name {
-      font-weight: 900;
-      font-size: 14px;
-      text-transform: uppercase;
-    }
-    .lb-bar-bg {
-      background: rgba(255,255,255,0.1);
-      height: 6px;
-      border-radius: 3px;
-      margin-top: 4px;
-      overflow: hidden;
-    }
-    .lb-bar-fill {
-      height: 100%;
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-    .lb-row-pts {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 24px;
-      color: var(--neon);
-    }
+    .lb-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; flex: 1; }
+    .lb-back { background: rgba(255,255,255,0.15); border: none; color: white; padding: 10px 14px; border-radius: 10px; cursor: pointer; font-weight: 900; font-size: 13px; }
+    .lb-period-toggle { display: flex; gap: 10px; padding: 16px 16px 4px 16px; }
+    .period-btn { flex: 1; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.8); padding: 10px 4px; border-radius: 12px; cursor: pointer; font-weight: 900; font-size: 11px; }
+    .period-btn.active { background: var(--neon); color: black; border-color: var(--neon); box-shadow: 0 0 15px rgba(251,255,0,0.2); }
+    .lb-filters { display: flex; gap: 12px; padding: 16px 16px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+    .lb-filters::-webkit-scrollbar { display: none; }
+    .lb-filter-btn { -webkit-appearance: none; appearance: none; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); color: #ffffff; padding: 12px 20px; border-radius: 20px; cursor: pointer; font-size: 14px; font-weight: 900; flex-shrink: 0; text-transform: uppercase; letter-spacing: 1px; display: inline-flex; align-items: center; justify-content: center; line-height: normal; min-height: 44px; }
+    .lb-filter-btn.active { background: var(--accent); color: #000000; border-color: var(--accent); box-shadow: 0 0 15px rgba(0,212,255,0.5); }
+    .lb-body { padding: 20px 14px; }
+    .lb-podium { display: flex; gap: 8px; margin-bottom: 24px; align-items: flex-end; justify-content: center; }
+    .lb-podium-item { text-align: center; flex: 1; max-width: 90px; }
+    .lb-podium-bar { border-radius: 10px 10px 0 0; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 8px; font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: rgba(0,0,0,0.8); min-height: 36px; transform: scaleY(0); transform-origin: bottom; transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .lb-podium-name { font-size: 10px; font-weight: 900; text-transform: uppercase; margin-top: 6px; color: white; }
+    .lb-podium-score { font-family: 'Bebas Neue', sans-serif; font-size: 18px; color: var(--neon); }
+    .lb-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.06); border-radius: 12px; margin-bottom: 10px; border-left: 4px solid #333; }
+    .lb-row-rank { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: rgba(255,255,255,0.5); width: 26px; text-align: center; }
+    .lb-row-name { font-weight: 900; font-size: 14px; text-transform: uppercase; }
+    .lb-bar-bg { background: rgba(255,255,255,0.1); height: 6px; border-radius: 3px; margin-top: 4px; overflow: hidden; }
+    .lb-bar-fill { height: 100%; transform: scaleX(0); transform-origin: left; transition: transform 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .lb-row-pts { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: var(--neon); }
     /* =======================
-       UPGRADED SNACKBAR TOAST 
+       TOAST / SHIMMER / POPUP
        ======================= */
-    #toast {
-      position: fixed;
-      bottom: -60px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(15,15,20,0.95);
-      border: 1px solid rgba(255,255,255,0.1);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      color: white;
-      padding: 14px 28px;
-      border-radius: 50px;
-      z-index: 5000;
-      font-weight: 600;
-      font-size: 13px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      opacity: 0;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      pointer-events: none;
-      white-space: nowrap;
-    }
-    #toast.show {
-      bottom: 28px;
-      opacity: 1;
-    }
-    /* =======================
-       SKELETON SHIMMER 
-       ======================= */
-    .shimmer {
-      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
-      background-size: 200% 100%;
-      animation: shimmerFlow 1.5s infinite linear;
-      border-radius: 8px;
-    }
-    @keyframes shimmerFlow {
-      0% { background-position: -200% 0; }
-      100% { background-position: 200% 0; }
-    }
-    /* =======================
-       CINEMATIC PAPER POPUP 
-       ======================= */
+    #toast { position: fixed; bottom: -60px; left: 50%; transform: translateX(-50%); background: rgba(15,15,20,0.95); border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.8); color: white; padding: 14px 28px; border-radius: 50px; z-index: 5000; font-weight: 600; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); pointer-events: none; white-space: nowrap; }
+    #toast.show { bottom: 28px; opacity: 1; }
+    .shimmer { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmerFlow 1.5s infinite linear; border-radius: 8px; }
+    @keyframes shimmerFlow { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
     #paper-popup {
-      position: fixed;
-      top: 50%; left: 50%;
+      position: fixed; top: 50%; left: 50%;
       transform: translate(-50%, -50%) scale(0) perspective(800px) rotateX(45deg);
-      opacity: 0;
-      width: 90%;
-      max-width: 400px;
+      opacity: 0; width: 90%; max-width: 400px;
       background: linear-gradient(160deg, #1a1200, #0a0800);
-      border: 2px solid rgba(255,215,0,0.6);
-      color: white;
-      padding: 30px;
-      border-radius: 24px;
-      z-index: 100000;
-      text-align: center;
-      box-shadow: 0 0 80px rgba(255,180,0,0.35), 0 0 200px rgba(0,0,0,0.95);
-      pointer-events: none;
-      display: none;
+      border: 2px solid rgba(255,215,0,0.6); color: white;
+      padding: 30px; border-radius: 24px; z-index: 100000;
+      text-align: center; box-shadow: 0 0 80px rgba(255,180,0,0.35), 0 0 200px rgba(0,0,0,0.95);
+      pointer-events: none; display: none;
     }
-    #paper-popup.show {
-      display: block;
-      animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    }
+    #paper-popup.show { display: block; animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
     @keyframes popIn {
       0% { transform: translate(-50%, -20%) scale(0.5) perspective(800px) rotateX(60deg); opacity: 0; }
       100% { transform: translate(-50%, -50%) scale(1) perspective(800px) rotateX(0deg); opacity: 1; }
@@ -726,28 +359,33 @@
       90% { transform: translateX(-2px); }
     }
     .shake { animation: screenShake 0.5s ease; }
+    /* Popup Remarks line */
+    #pop-remarks {
+      font-size: 12px; color: rgba(255,255,255,0.5); font-style: italic;
+      margin-top: 8px; max-height: 40px; overflow: hidden;
+      word-wrap: break-word;
+    }
   </style>
 </head>
 <body onload="boot()">
-  <!-- PRELOADER -->
   <div class="preloader" id="preloader">
     <div class="loader-pulse" style="font-size:60px;margin-bottom:10px;">⚡</div>
     <div style="font-family:'Bebas Neue',sans-serif; letter-spacing:4px; color:var(--neon); font-size:24px;">G.O.A.T.S UPLINK</div>
     <div style="font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:2px; margin-top:5px;">SECURE CONNECTION ESTABLISHING...</div>
   </div>
-  <!-- STATUS & OVERLAYS -->
   <div id="sync-status">OFFLINE</div>
   <div class="bg-overlay" id="main-bg"></div>
   <div id="toast"></div>
   <!-- CINEMATIC PAPER POPUP -->
   <div id="paper-popup">
     <div style="font-size:16px;font-weight:900;color:var(--neon);letter-spacing:2px;text-transform:uppercase;" id="pop-status">🎉 POINT AWARDED 🎉</div>
-    <div id="pop-name" style="font-family:'Bebas Neue',sans-serif;font-size:40px;margin:12px 0;line-height:1.1;word-wrap:break-word;color:white;text-shadow:0 2px 10px #000;">STUDENT</div>
+    <div id="pop-medal" style="font-size:50px;margin:8px 0;">🥇</div>
+    <div id="pop-name" style="font-family:'Bebas Neue',sans-serif;font-size:40px;margin:4px 0;line-height:1.1;word-wrap:break-word;color:white;text-shadow:0 2px 10px #000;">STUDENT</div>
     <div id="pop-dept" style="font-size:14px;font-weight:900;color:rgba(255,255,255,0.9);letter-spacing:1px;background:rgba(255,255,255,0.1);display:inline-block;padding:4px 12px;border-radius:20px;">DEPT</div>
-    <div id="pop-pts" style="font-family:'Bebas Neue',sans-serif;font-size:80px;font-weight:900;color:var(--neon);line-height:1;margin:16px 0;">+10</div>
+    <div id="pop-pts" style="font-family:'Bebas Neue',sans-serif;font-size:80px;font-weight:900;color:var(--neon);line-height:1;margin:10px 0;">+10</div>
     <div id="pop-house" style="color:black;padding:12px 20px;border-radius:14px;font-weight:900;font-size:20px;letter-spacing:2px;text-transform:uppercase;box-shadow:inset 0 0 10px rgba(0,0,0,0.5);">HOUSE</div>
+    <div id="pop-remarks"></div>
   </div>
-  <!-- HEADER -->
   <div class="header">
     <img id="m-logo" class="logo-img">
     <div class="header-title">
@@ -768,11 +406,9 @@
       <button id="btn-period-annually" class="period-btn" onclick="setLbPeriod('annually')">🏆 ANNUALLY</button>
     </div>
     <div class="lb-filters" id="lb-cat-filters"></div>
-    <div class="lb-body" id="lb-body">
-      <div class="lb-empty">Loading...</div>
-    </div>
+    <div class="lb-body" id="lb-body"><div class="lb-empty">Loading...</div></div>
   </div>
-  <!-- DEPARTMENT SELECTION GRID -->
+  <!-- DEPARTMENT GRID -->
   <div id="dept-gate" style="display:block;">
     <p class="gate-title">SELECT DEPARTMENT</p>
     <div id="dept-grid" class="dept-grid"></div>
@@ -793,10 +429,43 @@
     </div>
     <div class="t-panel">
       <div id="dept-label" style="font-size:11px;color:var(--accent);font-weight:900;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;text-align:center;"></div>
-      <div class="mode-toggle" id="type-select">
-        <button class="mode-btn active-pos" id="btn-pos" onclick="setMode('Positive')">＋10 POSITIVE</button>
-        <button class="mode-btn" id="btn-neg" onclick="setMode('Negative')">－5 NEGATIVE</button>
+      <!-- STAFF NAME DROPDOWN -->
+      <div id="staff-area" style="margin-bottom:14px;">
+        <select id="t-name">
+          <option value="" disabled selected>👤 Select Your Name</option>
+        </select>
       </div>
+      <!-- MEDAL TIER SELECTOR -->
+      <div class="medal-section" id="medal-section">
+        <div class="medal-section-label">🏅 SELECT POINT TIER</div>
+        <div class="medal-row">
+          <button class="medal-btn medal-2nd" id="medal-2" onclick="selectTier('2nd')">
+            <span class="medal-icon">🥈</span>
+            <span class="medal-pts" id="medal-2-pts">+10</span>
+          </button>
+          <button class="medal-btn medal-1st selected" id="medal-1" onclick="selectTier('1st')">
+            <span class="medal-icon">🥇</span>
+            <span class="medal-pts" id="medal-1-pts">+15</span>
+          </button>
+          <button class="medal-btn medal-3rd" id="medal-3" onclick="selectTier('3rd')">
+            <span class="medal-icon">🥉</span>
+            <span class="medal-pts" id="medal-3-pts">+5</span>
+          </button>
+        </div>
+        <div style="display:flex;justify-content:center;gap:12px;margin-top:10px;">
+          <button class="medal-btn medal-individual" id="medal-ind" onclick="selectTier('individual')">
+            <span class="medal-icon">⭐</span>
+            <span class="medal-pts" id="medal-ind-pts">+10</span>
+            <span class="medal-label">INDIVIDUAL</span>
+          </button>
+          <button class="medal-btn medal-deduct" id="medal-neg" onclick="selectTier('deduct')">
+            <span class="medal-icon">➖</span>
+            <span class="medal-pts" id="medal-neg-pts">-5</span>
+            <span class="medal-label">DEDUCT</span>
+          </button>
+        </div>
+      </div>
+      <div class="tier-indicator" id="tier-indicator">🥇 1ST PLACE — +15 POINTS</div>
       <div id="house-grid" class="house-grid"></div>
       <div class="scan-area" id="cam-area">
         <button id="cam-btn" onclick="toggleCam()">📷</button>
@@ -811,8 +480,12 @@
         </div>
         <button class="btn-sub" onclick="submitManual()">✓ SUBMIT MANUALLY</button>
       </div>
+      <!-- REMARKS (OPTIONAL) -->
+      <div class="remarks-wrap" id="remarks-area">
+        <div class="remarks-label">📝 REMARKS (OPTIONAL)</div>
+        <textarea id="remarks-input" placeholder="Reason for awarding points..." rows="2"></textarea>
+      </div>
       <div class="meta-row" id="teacher-meta">
-        <input type="text" id="t-name" placeholder="Teacher Name">
         <select id="p-cat"></select>
       </div>
       <!-- ADMIN ACTIONS -->
@@ -837,32 +510,31 @@
     <button class="btn-logout" onclick="logout()">← LOGOUT</button>
   </div>
   <script>
-    /* ============================================================
-       SERVICE WORKER REGISTRATION
-    ============================================================ */
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js').catch(console.error);
     }
     /* ============================================================
-       CONFIG — PUT YOUR GOOGLE APPS SCRIPT DEPLOYMENT URL HERE!
+       CONFIG
     ============================================================ */
-    const API = "https://script.google.com/macros/s/AKfycbzSxyR3kCGCKv25Sh0h9Q2IiGjmmMvhuNcJ2BmWa9RAVvgmsh3CHJJZhKD7vlUJNX184A/exec";
+    const API = "https://script.google.com/macros/s/AKfycbz8CNR1DRuM1a-TkMObxPhwt8S34UniWNUg6Tko8kVESU2Gb_ej73sMcyaQEjLhHJGRCw/exec";
     /* ============================================================
        GLOBAL STATE
     ============================================================ */
-    let scores = {}, houseColors = {}, currentMode = "Positive",
-        currentDept = "", selectedDept = "", scanActive = false,
-        html5QrCode = null, isAdmin = false, adminCats = [],
+    let scores = {}, houseColors = {}, currentDept = "", selectedDept = "",
+        scanActive = false, html5QrCode = null, isAdmin = false, adminCats = [],
         lbDept = "", lbCat = "ALL", lbPeriod = "weekly";
     let globalDeptList = [], globalAppLinks = [];
+    // POINT TIER SYSTEM
+    let currentTier = '1st';
+    let pointSettings = { '1st': 15, '2nd': 10, '3rd': 5, 'individual': 10, 'deduct': -5 };
+    const tierMedals = { '1st': '🥇', '2nd': '🥈', '3rd': '🥉', 'individual': '⭐', 'deduct': '➖' };
+    const tierLabels = { '1st': '1ST PLACE', '2nd': '2ND PLACE', '3rd': '3RD PLACE', 'individual': 'INDIVIDUAL', 'deduct': 'DEDUCTION' };
     /* ============================================================
-       BUILT-IN SOUND SYNTHESIZER (No external files needed!)
+       SOUND SYNTHESIZER
     ============================================================ */
     let audioCtx = null;
     function ensureAudioCtx() {
-      if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       if (audioCtx.state === 'suspended') audioCtx.resume();
     }
     function playBeep(type) {
@@ -870,34 +542,27 @@
         ensureAudioCtx();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
+        osc.connect(gain); gain.connect(audioCtx.destination);
         const now = audioCtx.currentTime;
         if (type === 'success') {
-          // Bright ascending coin-ding
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(523.25, now);       // C5
-          osc.frequency.setValueAtTime(659.25, now + 0.08); // E5
-          osc.frequency.setValueAtTime(880.00, now + 0.16); // A5
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          osc.frequency.setValueAtTime(880.00, now + 0.16);
           gain.gain.setValueAtTime(0, now);
           gain.gain.linearRampToValueAtTime(0.5, now + 0.02);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
-          osc.start(now);
-          osc.stop(now + 0.5);
+          osc.start(now); osc.stop(now + 0.5);
         } else {
-          // Harsh descending buzzer
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(200, now);
           osc.frequency.linearRampToValueAtTime(80, now + 0.25);
           gain.gain.setValueAtTime(0, now);
           gain.gain.linearRampToValueAtTime(0.4, now + 0.02);
           gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-          osc.start(now);
-          osc.stop(now + 0.35);
+          osc.start(now); osc.stop(now + 0.35);
         }
-      } catch (e) {
-        // Silently fail if audio not supported
-      }
+      } catch (e) {}
     }
     /* ============================================================
        API HELPER
@@ -906,21 +571,27 @@
       return fetch(API, { method: "POST", body: JSON.stringify(payload) }).then(r => r.json());
     }
     /* ============================================================
-       BOOT — Initialize App
+       BOOT
     ============================================================ */
     async function boot() {
       const st = document.getElementById('sync-status');
       const cache = localStorage.getItem('goats_cache');
-      if (cache) {
-        try { render(JSON.parse(cache)); } catch (e) {}
-      }
+      if (cache) { try { render(JSON.parse(cache)); } catch (e) {} }
       try {
         const res = await api({ action: "getAppData" });
         if (res && res.deptList) {
           localStorage.setItem('goats_cache', JSON.stringify(res));
           render(res);
-          st.innerText = "🟢 LIVE";
-          st.className = "status-live";
+          st.innerText = "🟢 LIVE"; st.className = "status-live";
+          // Apply dynamic point settings from backend
+          if (res.pointSettings) {
+            pointSettings['1st'] = res.pointSettings['1st'] || 15;
+            pointSettings['2nd'] = res.pointSettings['2nd'] || 10;
+            pointSettings['3rd'] = res.pointSettings['3rd'] || 5;
+            pointSettings['individual'] = res.pointSettings['individual'] || 10;
+            pointSettings['deduct'] = res.pointSettings['deduct'] || -5;
+            updateMedalDisplay();
+          }
           const savedUser = localStorage.getItem('goats_user');
           const savedPass = localStorage.getItem('goats_pass');
           if (savedUser && savedPass) {
@@ -929,19 +600,12 @@
             handleLogin(true);
           }
           processQueue();
-        } else {
-          throw new Error(res.error || "empty");
-        }
+        } else { throw new Error(res.error || "empty"); }
       } catch (e) {
-        st.innerText = "🔴 OFFLINE";
-        st.className = "status-offline";
+        st.innerText = "🔴 OFFLINE"; st.className = "status-offline";
       }
       const pl = document.getElementById('preloader');
-      if (pl) {
-        pl.style.opacity = '0';
-        setTimeout(() => pl.style.display = 'none', 600);
-      }
-      // Load student list for autocomplete
+      if (pl) { pl.style.opacity = '0'; setTimeout(() => pl.style.display = 'none', 600); }
       api({ action: "getStudentList" }).then(res => {
         if (res && res.success) {
           const dl = document.getElementById('student-list');
@@ -951,31 +615,58 @@
             const opt = Array.from(dl.options).find(o => o.value.toUpperCase() === val);
             if (opt && opt.dataset.house) {
               const hs = document.getElementById('man-house');
-              for (let i = 0; i < hs.options.length; i++) {
-                if (hs.options[i].value === opt.dataset.house) hs.selectedIndex = i;
-              }
+              for (let i = 0; i < hs.options.length; i++) { if (hs.options[i].value === opt.dataset.house) hs.selectedIndex = i; }
             }
           });
         }
       }).catch(() => {});
+      selectTier('1st'); // Default selection
+    }
+    /* ============================================================
+       UPDATE MEDAL DISPLAY WITH DYNAMIC POINTS
+    ============================================================ */
+    function updateMedalDisplay() {
+      document.getElementById('medal-1-pts').innerText = '+' + pointSettings['1st'];
+      document.getElementById('medal-2-pts').innerText = '+' + pointSettings['2nd'];
+      document.getElementById('medal-3-pts').innerText = '+' + pointSettings['3rd'];
+      document.getElementById('medal-ind-pts').innerText = '+' + pointSettings['individual'];
+      document.getElementById('medal-neg-pts').innerText = pointSettings['deduct'];
+      // Update tier indicator too
+      selectTier(currentTier);
+    }
+    /* ============================================================
+       MEDAL TIER SELECTOR
+    ============================================================ */
+    function selectTier(tier) {
+      currentTier = tier;
+      const pts = pointSettings[tier];
+      const isNeg = pts < 0;
+      // Update button states
+      ['medal-1', 'medal-2', 'medal-3', 'medal-ind', 'medal-neg'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('selected', 'medal-stamp');
+      });
+      const targetId = { '1st': 'medal-1', '2nd': 'medal-2', '3rd': 'medal-3', 'individual': 'medal-ind', 'deduct': 'medal-neg' }[tier];
+      const targetEl = document.getElementById(targetId);
+      targetEl.classList.add('medal-stamp');
+      setTimeout(() => { targetEl.classList.remove('medal-stamp'); targetEl.classList.add('selected'); }, 400);
+      // Update indicator
+      const ind = document.getElementById('tier-indicator');
+      ind.innerText = `${tierMedals[tier]} ${tierLabels[tier]} — ${pts > 0 ? '+' : ''}${pts} POINTS`;
+      ind.className = 'tier-indicator' + (isNeg ? ' negative' : '');
+      // Dynamic browser theme
+      let metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (!metaTheme) { metaTheme = document.createElement('meta'); metaTheme.name = "theme-color"; document.head.appendChild(metaTheme); }
+      const themeColors = { '1st': '#d4af37', '2nd': '#c0c0c0', '3rd': '#cd7f32', 'individual': '#00ff88', 'deduct': '#ff416c' };
+      metaTheme.content = themeColors[tier] || '#fbff00';
     }
     /* ============================================================
        ICON RESOLVER
     ============================================================ */
-    const deptIcons = {
-      'cse': '💻', 'it': '🖥️', 'ece': '📡', 'eee': '⚡', 'mech': '⚙️',
-      'civil': '🏗️', 'auto': '🚗', 'chem': '🧪', 'arch': '🏛️', 'admin': '👑',
-      'mca': '🖱️', 'bca': '📱', 'arts': '🎨', 'science': '🔬', 'commerce': '📊'
-    };
-    function getIcon(d) {
-      const k = d.toLowerCase().replace(/\s+/g, '');
-      for (const key in deptIcons) {
-        if (k.includes(key)) return deptIcons[key];
-      }
-      return '📚';
-    }
+    const deptIcons = { 'cse':'💻','it':'🖥️','ece':'📡','eee':'⚡','mech':'⚙️','civil':'🏗️','auto':'🚗','chem':'🧪','arch':'🏛️','admin':'👑','mca':'🖱️','bca':'📱','arts':'🎨','science':'🔬','commerce':'📊' };
+    function getIcon(d) { const k = d.toLowerCase().replace(/\s+/g,''); for (const key in deptIcons) { if (k.includes(key)) return deptIcons[key]; } return '📚'; }
     /* ============================================================
-       RENDER — Build the UI from Data
+       RENDER
     ============================================================ */
     function render(data) {
       if (!data) return;
@@ -991,53 +682,36 @@
           <div class="dept-card-icon">${getIcon(d)}</div>
           <b>${d}</b>
           <div class="dept-card-bar"></div>
-        </div>
-      `).join('');
-      if (categories) {
-        document.getElementById('p-cat').innerHTML = categories.map(c => `<option>${c}</option>`).join('');
-      }
+        </div>`).join('');
+      if (categories) { document.getElementById('p-cat').innerHTML = categories.map(c => `<option>${c}</option>`).join(''); }
       if (houseConfig) {
         const strip = document.getElementById('score-strip');
         const grid = document.getElementById('house-grid');
         const sel = document.getElementById('man-house');
-        strip.innerHTML = "";
-        grid.innerHTML = "";
-        sel.innerHTML = '<option selected disabled>House</option>';
+        strip.innerHTML = ""; grid.innerHTML = ""; sel.innerHTML = '<option selected disabled>House</option>';
         houseConfig.forEach((h, i) => {
           scores[h.name] = 0;
           houseColors[h.name] = h.color;
-          strip.innerHTML += `
-            <div class="score-chip" id="chip-${h.name}" style="border-top-color:${h.color};--chip-color:${h.color}">
-              <div class="chip-rank" id="rank-${h.name}"></div>
-              <div class="chip-name">${h.name}</div>
-              <div class="chip-score" id="s-${h.name}">0</div>
-            </div>`;
-          grid.innerHTML += `
-            <button class="house-btn" style="background:${h.color}" onclick="record('${h.name}','WINNER')">${h.name}</button>`;
+          strip.innerHTML += `<div class="score-chip" id="chip-${h.name}" style="border-top-color:${h.color};--chip-color:${h.color}"><div class="chip-rank" id="rank-${h.name}"></div><div class="chip-name">${h.name}</div><div class="chip-score" id="s-${h.name}">0</div></div>`;
+          grid.innerHTML += `<button class="house-btn" style="background:${h.color}" onclick="record('${h.name}','WINNER')">${h.name}</button>`;
           sel.add(new Option(h.name, h.name));
         });
       }
-      setMode('Positive');
     }
-    /* ============================================================
-       RANK UPDATE
-    ============================================================ */
     function updateRanks() {
       const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
-      const medals = ['🥇', '🥈', '🥉'];
+      const medals = ['🥇','🥈','🥉'];
       sorted.forEach(([name], i) => {
-        const rankEl = document.getElementById('rank-' + name);
-        const chipEl = document.getElementById('chip-' + name);
-        if (rankEl) rankEl.innerText = medals[i] || '';
-        if (chipEl) chipEl.classList.toggle('leader', i === 0);
+        const r = document.getElementById('rank-' + name);
+        const c = document.getElementById('chip-' + name);
+        if (r) r.innerText = medals[i] || '';
+        if (c) c.classList.toggle('leader', i === 0);
       });
     }
     /* ============================================================
        NAVIGATION
     ============================================================ */
-    function handleCard(d) {
-      if (isAdmin) { openLb(d); } else { openLogin(d); }
-    }
+    function handleCard(d) { if (isAdmin) openLb(d); else openLogin(d); }
     function openLogin(d) {
       selectedDept = d;
       document.getElementById('target-dept').innerText = d;
@@ -1045,11 +719,9 @@
       document.getElementById('login-modal').style.display = 'flex';
       setTimeout(() => document.getElementById('pass-input').focus(), 50);
     }
-    function closeLogin() {
-      document.getElementById('login-modal').style.display = 'none';
-    }
+    function closeLogin() { document.getElementById('login-modal').style.display = 'none'; }
     /* ============================================================
-       LOGIN HANDLER
+       LOGIN + LOAD STAFF
     ============================================================ */
     async function handleLogin(isSilent = false) {
       const p = document.getElementById('pass-input').value;
@@ -1067,144 +739,131 @@
           document.getElementById('teacher-view').style.display = 'block';
           document.getElementById('admin-actions').style.display = isAdmin ? 'flex' : 'none';
           if (!isAdmin) {
-            // TEACHER VIEW: Show all point-giving tools
-            document.getElementById('type-select').style.display = 'flex';
+            // TEACHER VIEW
+            document.getElementById('medal-section').style.display = 'block';
+            document.getElementById('tier-indicator').style.display = 'block';
             document.getElementById('house-grid').style.display = 'grid';
             document.getElementById('cam-area').style.display = 'block';
             document.getElementById('manual-area').style.display = 'block';
+            document.getElementById('remarks-area').style.display = 'block';
             document.getElementById('teacher-meta').style.display = 'flex';
+            document.getElementById('staff-area').style.display = 'block';
             document.querySelector('.scoreboard').style.display = 'block';
             document.getElementById('dept-label').style.display = 'block';
+            // LOAD STAFF NAMES FOR THIS DEPARTMENT
+            loadStaffForDept(selectedDept);
           } else {
-            // ADMIN VIEW: Hide all point-giving tools
-            document.getElementById('type-select').style.display = 'none';
+            // ADMIN VIEW
+            document.getElementById('medal-section').style.display = 'none';
+            document.getElementById('tier-indicator').style.display = 'none';
             document.getElementById('house-grid').style.display = 'none';
             document.getElementById('cam-area').style.display = 'none';
             document.getElementById('manual-area').style.display = 'none';
+            document.getElementById('remarks-area').style.display = 'none';
             document.getElementById('teacher-meta').style.display = 'none';
+            document.getElementById('staff-area').style.display = 'none';
             document.querySelector('.scoreboard').style.display = 'none';
             document.getElementById('dept-label').style.display = 'none';
             document.querySelector('.gate-title').innerText = "📊 ADMIN DASHBOARD - SELECT LEADERBOARD";
             const leaderDepts = globalDeptList.filter(d => d.toLowerCase() !== 'admin');
-            const gridHtml = leaderDepts.map(d => `
-              <div class="dept-card" onclick="openLb('${d}')">
-                <div class="dept-card-icon">${getIcon(d)}</div>
-                <b>${d}</b>
-                <div class="dept-card-bar"></div>
-              </div>`).join('');
-            const allCard = `
-              <div id="card-all" class="dept-card" style="border-color:var(--neon); box-shadow: 0 0 20px rgba(251,255,0,0.2);" onclick="openLb('ALL')">
-                <div class="dept-card-icon">👑</div>
-                <b style="color:var(--neon)">OVERALL TOTALS</b>
-                <div class="dept-card-bar" style="background:var(--neon)"></div>
-              </div>`;
-            const externalApps = globalAppLinks.map(app => `
-              <div class="dept-card" style="border-color:var(--accent); background:rgba(0,212,255,0.05); box-shadow: 0 0 15px rgba(0,212,255,0.15);" onclick="window.open('${app.url}', '_blank')">
-                <div class="dept-card-icon">${app.icon}</div>
-                <b style="color:var(--accent)">${app.name}</b>
-                <div class="dept-card-bar" style="background:var(--accent)"></div>
-              </div>`).join('');
+            const gridHtml = leaderDepts.map(d => `<div class="dept-card" onclick="openLb('${d}')"><div class="dept-card-icon">${getIcon(d)}</div><b>${d}</b><div class="dept-card-bar"></div></div>`).join('');
+            const allCard = `<div id="card-all" class="dept-card" style="border-color:var(--neon);box-shadow:0 0 20px rgba(251,255,0,0.2);" onclick="openLb('ALL')"><div class="dept-card-icon">👑</div><b style="color:var(--neon)">OVERALL TOTALS</b><div class="dept-card-bar" style="background:var(--neon)"></div></div>`;
+            const externalApps = globalAppLinks.map(app => `<div class="dept-card" style="border-color:var(--accent);background:rgba(0,212,255,0.05);box-shadow:0 0 15px rgba(0,212,255,0.15);" onclick="window.open('${app.url}','_blank')"><div class="dept-card-icon">${app.icon}</div><b style="color:var(--accent)">${app.name}</b><div class="dept-card-bar" style="background:var(--accent)"></div></div>`).join('');
             document.getElementById('dept-grid').innerHTML = allCard + gridHtml + externalApps;
             document.getElementById('teacher-view').style.paddingBottom = "10px";
             window.scrollTo(0, 0);
           }
         } else {
-          localStorage.removeItem('goats_user');
-          localStorage.removeItem('goats_pass');
+          localStorage.removeItem('goats_user'); localStorage.removeItem('goats_pass');
           if (!isSilent) showToast("❌ Wrong Password");
         }
+      } catch (e) { if (!isSilent) showToast("❌ Login Error!"); }
+    }
+    /* ============================================================
+       LOAD STAFF FOR DEPARTMENT
+    ============================================================ */
+    async function loadStaffForDept(dept) {
+      const sel = document.getElementById('t-name');
+      sel.innerHTML = '<option value="" disabled selected>👤 Loading staff...</option>';
+      try {
+        const res = await api({ action: "getStaffByDept", dept: dept });
+        sel.innerHTML = '<option value="" disabled selected>👤 Select Your Name</option>';
+        if (res.success && res.staff && res.staff.length) {
+          res.staff.forEach(s => { sel.add(new Option(s, s)); });
+        } else {
+          // Fallback: allow free text
+          sel.innerHTML = '<option value="" disabled selected>No staff found — Type below</option>';
+        }
       } catch (e) {
-        if (!isSilent) showToast("❌ Login Error!");
+        sel.innerHTML = '<option value="" disabled selected>👤 Select Your Name</option>';
       }
     }
     /* ============================================================
-       OFFLINE QUEUE SYNC
+       OFFLINE QUEUE
     ============================================================ */
     async function processQueue() {
       const q = JSON.parse(localStorage.getItem('goats_queue') || '[]');
       if (q.length === 0) return;
       showToast("📡 Syncing " + q.length + " offline points...");
       let failed = [];
-      for (const item of q) {
-        try {
-          const r = await api({ action: "submitPoint", data: item });
-          if (!r || !r.success) throw new Error();
-        } catch (e) {
-          failed.push(item);
-        }
-      }
+      for (const item of q) { try { const r = await api({ action: "submitPoint", data: item }); if (!r || !r.success) throw new Error(); } catch (e) { failed.push(item); } }
       localStorage.setItem('goats_queue', JSON.stringify(failed));
-      if (failed.length === 0) {
-        showToast("✅ All offline points synced!");
-      } else {
-        showToast("⚠️ Some offline points still pending.");
-      }
+      if (failed.length === 0) showToast("✅ All synced!"); else showToast("⚠️ Some pending.");
     }
     /* ============================================================
-       RECORD POINT — Cinematic Feedback System
+       RECORD POINT
     ============================================================ */
     async function record(hInput, sName, sDept = null) {
-      if (isAdmin) return; // Admins CANNOT give points!
-      const t = document.getElementById('t-name').value;
-      if (!t) {
-        showToast("⚠️ Enter Teacher Name first!");
-        if (scanActive) stopCam();
-        return;
-      }
+      if (isAdmin) return;
+      const tSel = document.getElementById('t-name');
+      const teacherName = tSel.value;
+      if (!teacherName) { showToast("⚠️ Select your name first!"); if (scanActive) stopCam(); return; }
       const actualH = Object.keys(scores).find(k => k.toLowerCase() === hInput.trim().toLowerCase());
       if (!actualH) return;
-      const pts = currentMode === 'Positive' ? 10 : -5;
+      const pts = pointSettings[currentTier];
+      const remarks = document.getElementById('remarks-input').value.trim();
       scores[actualH] += pts;
       document.getElementById('s-' + actualH).innerText = scores[actualH];
       updateRanks();
-      // Haptic Vibration
-      if (navigator.vibrate) {
-        try { navigator.vibrate(pts > 0 ? [60, 60, 60] : [250]); } catch (e) {}
-      }
-      // Sound Effects via Built-In Synthesizer
-      if (pts > 0) {
-        confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
-        playBeep('success');
-      } else {
-        playBeep('fail');
-      }
-      // Screen Shake Effect
-      document.body.classList.remove('shake');
-      void document.body.offsetWidth;
-      document.body.classList.add('shake');
-      setTimeout(() => document.body.classList.remove('shake'), 500);
+      // Haptic
+      if (navigator.vibrate) { try { navigator.vibrate(pts > 0 ? [60, 60, 60] : [250]); } catch (e) {} }
+      // Sound
+      if (pts > 0) { confetti({ particleCount: currentTier === '1st' ? 120 : currentTier === '2nd' ? 80 : 40, spread: 70, origin: { y: 0.6 } }); playBeep('success'); }
+      else { playBeep('fail'); }
+      // Screen Shake
+      document.body.classList.remove('shake'); void document.body.offsetWidth;
+      document.body.classList.add('shake'); setTimeout(() => document.body.classList.remove('shake'), 500);
       // Cinematic Paper Popup
       const pop = document.getElementById('paper-popup');
       document.getElementById('pop-status').innerText = pts > 0 ? "🎉 POINT AWARDED 🎉" : "⚠️ POINT DEDUCTED ⚠️";
       document.getElementById('pop-status').style.color = pts > 0 ? "var(--neon)" : "var(--red)";
+      document.getElementById('pop-medal').innerText = tierMedals[currentTier];
       document.getElementById('pop-name').innerText = sName || "STUDENT";
       document.getElementById('pop-dept').innerText = currentDept.toUpperCase();
-      document.getElementById('pop-pts').innerText = pts > 0 ? "+10" : "-5";
+      document.getElementById('pop-pts').innerText = (pts > 0 ? '+' : '') + pts;
       document.getElementById('pop-pts').style.color = pts > 0 ? "var(--neon)" : "var(--red)";
       document.getElementById('pop-house').innerText = actualH;
       document.getElementById('pop-house').style.background = houseColors[actualH] || "#fff";
-      pop.classList.remove('show');
-      void pop.offsetWidth;
-      pop.classList.add('show');
+      document.getElementById('pop-remarks').innerText = remarks ? `"${remarks}"` : '';
+      pop.classList.remove('show'); void pop.offsetWidth; pop.classList.add('show');
       setTimeout(() => pop.classList.remove('show'), 3500);
-      // Send to server
+      // Payload with remarks and dynamic points
       const payload = {
-        dept: currentDept,
-        studentDept: sDept,
-        studentName: sName,
-        teacherName: t,
-        category: document.getElementById('p-cat').value,
-        house: actualH,
-        type: currentMode
+        dept: currentDept, studentDept: sDept, studentName: sName,
+        teacherName: teacherName, category: document.getElementById('p-cat').value,
+        house: actualH, type: pts > 0 ? 'Positive' : 'Negative',
+        points: pts, tier: currentTier,
+        remarks: remarks
       };
+      // Clear remarks after submission
+      document.getElementById('remarks-input').value = '';
       try {
         if (!navigator.onLine) throw new Error("Offline");
         const res = await api({ action: "submitPoint", data: payload });
         if (!res || !res.success) throw new Error();
       } catch (e) {
         const q = JSON.parse(localStorage.getItem('goats_queue') || '[]');
-        q.push(payload);
-        localStorage.setItem('goats_queue', JSON.stringify(q));
+        q.push(payload); localStorage.setItem('goats_queue', JSON.stringify(q));
       }
     }
     /* ============================================================
@@ -1216,21 +875,12 @@
         document.getElementById('cam-btn').innerText = '⏹';
         document.getElementById('scan-hint').innerText = 'SCANNING...';
         html5QrCode = new Html5Qrcode("reader");
-        await html5QrCode.start(
-          { facingMode: "environment" },
-          { fps: 15, qrbox: 240 },
-          (t) => {
-            const p = t.split('|').map(x => x.trim());
-            if (p.length >= 3) {
-              record(p[2], p[0], p[1]);
-              stopCam();
-            }
-          }
-        );
+        await html5QrCode.start({ facingMode: "environment" }, { fps: 15, qrbox: 240 }, (t) => {
+          const p = t.split('|').map(x => x.trim());
+          if (p.length >= 3) { record(p[2], p[0], p[1]); stopCam(); }
+        });
         scanActive = true;
-      } else {
-        stopCam();
-      }
+      } else { stopCam(); }
     }
     async function stopCam() {
       if (html5QrCode) await html5QrCode.stop();
@@ -1242,89 +892,42 @@
     function submitManual() {
       const n = document.getElementById('man-name').value;
       const h = document.getElementById('man-house').value;
-      if (!n || !h) {
-        showToast("⚠️ Fill name & house");
-        return;
-      }
-      record(h, n);
-      document.getElementById('man-name').value = "";
+      if (!n || !h) { showToast("⚠️ Fill name & house"); return; }
+      record(h, n); document.getElementById('man-name').value = "";
     }
     /* ============================================================
-       UPGRADED TOAST / SNACKBAR
+       TOAST
     ============================================================ */
     function showToast(msg) {
       const t = document.getElementById('toast');
-      t.innerText = msg;
-      t.classList.add('show');
+      t.innerText = msg; t.classList.add('show');
       setTimeout(() => t.classList.remove('show'), 3200);
-    }
-    /* ============================================================
-       MODE SETTER + DYNAMIC BROWSER THEME COLOR
-    ============================================================ */
-    function setMode(m) {
-      currentMode = m;
-      document.getElementById('btn-pos').className = 'mode-btn' + (m === 'Positive' ? ' active-pos' : '');
-      document.getElementById('btn-neg').className = 'mode-btn' + (m === 'Negative' ? ' active-neg' : '');
-      // Dynamic Browser Context Color (Apple-style)
-      let metaTheme = document.querySelector('meta[name="theme-color"]');
-      if (!metaTheme) {
-        metaTheme = document.createElement('meta');
-        metaTheme.name = "theme-color";
-        document.head.appendChild(metaTheme);
-      }
-      metaTheme.content = (m === 'Positive') ? "#00ff88" : "#ff416c";
     }
     /* ============================================================
        LOGOUT
     ============================================================ */
     function logout() {
-      localStorage.removeItem('goats_user');
-      localStorage.removeItem('goats_pass');
+      localStorage.removeItem('goats_user'); localStorage.removeItem('goats_pass');
       document.getElementById('teacher-view').style.display = 'none';
       document.getElementById('dept-gate').style.display = 'block';
       document.querySelector('.gate-title').innerText = "SELECT DEPARTMENT";
-      const allCard = document.getElementById('card-all');
-      if (allCard) allCard.remove();
-      isAdmin = false;
-      currentDept = "";
+      const allCard = document.getElementById('card-all'); if (allCard) allCard.remove();
+      isAdmin = false; currentDept = "";
       if (scanActive) stopCam();
       if (localStorage.getItem('goats_cache')) render(JSON.parse(localStorage.getItem('goats_cache')));
     }
     /* ============================================================
        ADMIN TOOLS
     ============================================================ */
-    function toggleBranding() {
-      const b = document.getElementById('admin-branding');
-      b.style.display = (b.style.display === 'block') ? 'none' : 'block';
-      document.getElementById('admin-webapp-form').style.display = 'none';
-    }
-    function toggleWebAppForm() {
-      const b = document.getElementById('admin-webapp-form');
-      b.style.display = (b.style.display === 'block') ? 'none' : 'block';
-      document.getElementById('admin-branding').style.display = 'none';
-    }
-    async function forceSync() {
-      showToast("🔄 Syncing queues...");
-      await processQueue();
-      localStorage.removeItem('goats_cache');
-      await boot();
-    }
+    function toggleBranding() { const b = document.getElementById('admin-branding'); b.style.display = (b.style.display === 'block') ? 'none' : 'block'; document.getElementById('admin-webapp-form').style.display = 'none'; }
+    function toggleWebAppForm() { const b = document.getElementById('admin-webapp-form'); b.style.display = (b.style.display === 'block') ? 'none' : 'block'; document.getElementById('admin-branding').style.display = 'none'; }
+    async function forceSync() { showToast("🔄 Syncing..."); await processQueue(); localStorage.removeItem('goats_cache'); await boot(); }
     async function saveNewApp() {
-      const name = document.getElementById('new-app-name').value;
-      const url = document.getElementById('new-app-url').value;
-      const icon = document.getElementById('new-app-icon').value || "✨";
+      const name = document.getElementById('new-app-name').value, url = document.getElementById('new-app-url').value, icon = document.getElementById('new-app-icon').value || "✨";
       if (!name || !url) { showToast("⚠️ Name and URL required"); return; }
-      showToast("Uploading App Link...");
-      const res = await api({ action: "saveAppLink", data: { name, url, icon } });
-      if (res.success) {
-        localStorage.removeItem('goats_cache');
-        document.getElementById('new-app-name').value = '';
-        document.getElementById('new-app-url').value = '';
-        showToast("✅ App Linked! Refreshing...");
-        setTimeout(() => location.reload(), 1000);
-      } else {
-        showToast("❌ Failed to save.");
-      }
+      showToast("Uploading..."); const res = await api({ action: "saveAppLink", data: { name, url, icon } });
+      if (res.success) { localStorage.removeItem('goats_cache'); document.getElementById('new-app-name').value = ''; document.getElementById('new-app-url').value = ''; showToast("✅ Linked!"); setTimeout(() => location.reload(), 1000); }
+      else showToast("❌ Failed.");
     }
     function handleFile(input, key) {
       if (!input.files[0]) return;
@@ -1332,147 +935,60 @@
       rd.onload = async (e) => {
         showToast("Uploading...");
         const res = await api({ action: "uploadBranding", data: { key, name: input.files[0].name, file: e.target.result } });
-        if (res.success) {
-          localStorage.removeItem('goats_cache');
-          showToast("✅ Updated!");
-          setTimeout(() => location.reload(), 1000);
-        } else {
-          showToast("❌ Upload Failed");
-        }
+        if (res.success) { localStorage.removeItem('goats_cache'); showToast("✅ Updated!"); setTimeout(() => location.reload(), 1000); }
+        else showToast("❌ Upload Failed");
       };
       rd.readAsDataURL(input.files[0]);
     }
     /* ============================================================
-       LEADERBOARD MODAL
+       LEADERBOARD
     ============================================================ */
     function openLb(dept) {
-      lbDept = dept;
-      lbCat = 'ALL';
-      setLbPeriod('weekly');
+      lbDept = dept; lbCat = 'ALL'; setLbPeriod('weekly');
       document.getElementById('lb-title').innerText = dept.toUpperCase();
       const cats = ['ALL', ...adminCats];
-      document.getElementById('lb-cat-filters').innerHTML = cats.map(c => `
-        <button class="lb-filter-btn${c === 'ALL' ? ' active' : ''}" onclick="setLbCat('${c}')">${c}</button>
-      `).join('');
+      document.getElementById('lb-cat-filters').innerHTML = cats.map(c => `<button class="lb-filter-btn${c === 'ALL' ? ' active' : ''}" onclick="setLbCat('${c}')">${c}</button>`).join('');
       document.getElementById('lb-modal').style.display = 'flex';
     }
-    function closeLb() {
-      document.getElementById('lb-modal').style.display = 'none';
-    }
-    function setLbCat(cat) {
-      lbCat = cat;
-      document.querySelectorAll('.lb-filter-btn').forEach(b => {
-        b.classList.toggle('active', b.innerText === cat);
-      });
-      loadLb();
-    }
+    function closeLb() { document.getElementById('lb-modal').style.display = 'none'; }
+    function setLbCat(cat) { lbCat = cat; document.querySelectorAll('.lb-filter-btn').forEach(b => b.classList.toggle('active', b.innerText === cat)); loadLb(); }
     function setLbPeriod(p) {
       lbPeriod = p;
       document.getElementById('btn-period-weekly').className = 'period-btn' + (p === 'weekly' ? ' active' : '');
       document.getElementById('btn-period-annually').className = 'period-btn' + (p === 'annually' ? ' active' : '');
       loadLb();
     }
-    /* ============================================================
-       LOAD LEADERBOARD — Shimmer + Odometer + Spring Bars
-    ============================================================ */
     async function loadLb() {
       const body = document.getElementById('lb-body');
-      // SKELETON SHIMMER LOADING
-      body.innerHTML = `
-        <div style="height:120px; width:100%; margin-bottom:20px;" class="shimmer"></div>
-        <div style="height:45px; width:100%; margin-bottom:10px;" class="shimmer"></div>
-        <div style="height:45px; width:100%; margin-bottom:10px;" class="shimmer"></div>
-        <div style="height:45px; width:100%; margin-bottom:10px;" class="shimmer"></div>
-      `;
+      body.innerHTML = `<div style="height:120px;width:100%;margin-bottom:20px;" class="shimmer"></div><div style="height:45px;width:100%;margin-bottom:10px;" class="shimmer"></div><div style="height:45px;width:100%;margin-bottom:10px;" class="shimmer"></div>`;
       try {
         const res = await api({ action: "getDeptLeaderboard", dept: lbDept, category: lbCat, period: lbPeriod });
-        if (!res.success || !res.leaderboard.length) {
-          body.innerHTML = '<div style="text-align:center; padding: 40px; color:rgba(255,255,255,0.4); font-size:14px;">No data for this timeframe.</div>';
-          return;
-        }
-        const lb = res.leaderboard;
-        const max = lb[0].pts || 1;
-        const medals = ['🥇', '🥈', '🥉'];
-        // BUILD PODIUM
+        if (!res.success || !res.leaderboard.length) { body.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.4);">No data for this timeframe.</div>'; return; }
+        const lb = res.leaderboard, max = lb[0].pts || 1, medals = ['🥇', '🥈', '🥉'];
         let pod = '<div class="lb-podium">';
         const order = lb.length >= 3 ? [1, 0, 2] : lb.map((_, i) => i);
-        order.filter(i => lb[i]).forEach(i => {
-          const h = lb[i];
-          const col = houseColors[h.name] || '#888';
-          const ht = Math.max(60, Math.round((h.pts / max) * 140));
-          pod += `
-            <div class="lb-podium-item">
-              <div class="lb-podium-bar val-bar" style="background:${col}; height:${ht}px">${medals[i] || ''}</div>
-              <div class="lb-podium-name">${h.name}</div>
-              <div class="lb-podium-score count-up" data-val="${h.pts}">0</div>
-            </div>`;
-        });
+        order.filter(i => lb[i]).forEach(i => { const h = lb[i], col = houseColors[h.name] || '#888', ht = Math.max(60, Math.round((h.pts / max) * 140));
+          pod += `<div class="lb-podium-item"><div class="lb-podium-bar val-bar" style="background:${col};height:${ht}px">${medals[i]||''}</div><div class="lb-podium-name">${h.name}</div><div class="lb-podium-score count-up" data-val="${h.pts}">0</div></div>`; });
         pod += '</div>';
-        // BUILD ROWS
         let rowsHtml = '';
-        lb.forEach((h, i) => {
-          const col = houseColors[h.name] || '#888';
-          let pct = 0;
-          if (max > 0 && h.pts > 0) pct = Math.round((h.pts / max) * 100);
-          rowsHtml += `
-            <div class="lb-row" style="border-left-color:${col}">
-              <div class="lb-row-rank">${medals[i] || i + 1}</div>
-              <div style="flex:1; min-width:0;">
-                <div class="lb-row-name">${h.name}</div>
-                <div class="lb-bar-bg">
-                  <div class="lb-bar-fill val-bar" style="width:${pct}%; background:${col}"></div>
-                </div>
-              </div>
-              <div class="lb-row-pts count-up" data-val="${h.pts}">0</div>
-            </div>`;
-        });
+        lb.forEach((h, i) => { const col = houseColors[h.name] || '#888'; let pct = max > 0 && h.pts > 0 ? Math.round((h.pts / max) * 100) : 0;
+          rowsHtml += `<div class="lb-row" style="border-left-color:${col}"><div class="lb-row-rank">${medals[i]||i+1}</div><div style="flex:1;min-width:0;"><div class="lb-row-name">${h.name}</div><div class="lb-bar-bg"><div class="lb-bar-fill val-bar" style="width:${pct}%;background:${col}"></div></div></div><div class="lb-row-pts count-up" data-val="${h.pts}">0</div></div>`; });
         const subtitle = lbPeriod === 'weekly' ? '📅 LAST 7 DAYS' : '🏆 ANNUAL SCORES';
-        const catTitle = lbCat === 'ALL' ? 'All Categories' : lbCat;
-        body.innerHTML = `
-          <div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">
-            ${subtitle} · ${catTitle}
-          </div>
-          ${pod}
-          ${rowsHtml}`;
-        // ODOMETER COUNTING ANIMATION
-        body.querySelectorAll('.count-up').forEach(el => {
-          const target = parseInt(el.getAttribute('data-val'), 10) || 0;
-          const dur = 1400;
-          let start = null;
-          function step(ts) {
-            if (!start) start = ts;
-            const prog = Math.min((ts - start) / dur, 1);
-            const ease = 1 - Math.pow(1 - prog, 3);
-            el.innerText = Math.floor(ease * target);
-            if (prog < 1) window.requestAnimationFrame(step);
-          }
-          window.requestAnimationFrame(step);
-        });
-        // SPRING-LOADED BAR ANIMATIONS
-        setTimeout(() => {
-          body.querySelectorAll('.val-bar').forEach(el => {
-            el.style.transform = 'scaleX(1) scaleY(1)';
-          });
-        }, 50);
-      } catch (e) {
-        body.innerHTML = '<div style="text-align:center;color:red;padding:40px;">Failed to load data.</div>';
-      }
+        body.innerHTML = `<div style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px">${subtitle} · ${lbCat === 'ALL' ? 'All Categories' : lbCat}</div>${pod}${rowsHtml}`;
+        body.querySelectorAll('.count-up').forEach(el => { const target = parseInt(el.getAttribute('data-val'), 10) || 0; const dur = 1400; let start = null;
+          function step(ts) { if (!start) start = ts; const prog = Math.min((ts - start) / dur, 1); el.innerText = Math.floor((1 - Math.pow(1 - prog, 3)) * target); if (prog < 1) window.requestAnimationFrame(step); }
+          window.requestAnimationFrame(step); });
+        setTimeout(() => { body.querySelectorAll('.val-bar').forEach(el => { el.style.transform = 'scaleX(1) scaleY(1)'; }); }, 50);
+      } catch (e) { body.innerHTML = '<div style="text-align:center;color:red;padding:40px;">Failed to load.</div>'; }
     }
     /* ============================================================
-       BULK QR PRINT
+       BULK QR
     ============================================================ */
     async function prepareBulkPrint() {
       showToast("Loading students...");
       const res = await api({ action: "getStudentList" });
       const pw = window.open('', '_blank');
-      pw.document.write(`<!DOCTYPE html><html><head><title>Batch QR</title>
-        <style>body{font-family:sans-serif;margin:0;padding:20px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.box{border:1px solid #ddd;padding:10px;text-align:center;page-break-inside:avoid;border-radius:8px}.qr{width:110px;height:110px;margin:5px auto;background:#fff}.lbl{font-size:9px;font-weight:900;text-transform:uppercase;line-height:1.4;margin-top:5px;color:#000}.btn{position:fixed;top:10px;right:10px;padding:12px 24px;background:#000;color:#fbff00;border:none;border-radius:8px;font-weight:900;cursor:pointer}@media print{.btn{display:none}@page{size:A4;margin:1cm}}</style>
-      </head><body>
-        <button class="btn" onclick="window.print()">PRINT A4 SHEET</button>
-        <div class="grid" id="g"></div>
-        <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script>
-        <script>function gen(){const ss=${JSON.stringify(res.students)},g=document.getElementById('g');if(typeof QRCode==='undefined'){setTimeout(gen,100);return;}ss.forEach(s=>{const b=document.createElement('div');b.className='box';const q=document.createElement('div');q.className='qr';const l=document.createElement('div');l.className='lbl';l.innerHTML=(s.name||'')+'<br>'+(s.dept||'')+' | '+(s.house||'');b.appendChild(q);b.appendChild(l);g.appendChild(b);try{new QRCode(q,{text:(s.name||'')+' | '+(s.dept||'')+' | '+(s.house||''),width:110,height:110});}catch(e){}});}gen();<\/script>
-      </body></html>`);
+      pw.document.write(`<!DOCTYPE html><html><head><title>Batch QR</title><style>body{font-family:sans-serif;margin:0;padding:20px}.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.box{border:1px solid #ddd;padding:10px;text-align:center;page-break-inside:avoid;border-radius:8px}.qr{width:110px;height:110px;margin:5px auto;background:#fff}.lbl{font-size:9px;font-weight:900;text-transform:uppercase;line-height:1.4;margin-top:5px;color:#000}.btn{position:fixed;top:10px;right:10px;padding:12px 24px;background:#000;color:#fbff00;border:none;border-radius:8px;font-weight:900;cursor:pointer}@media print{.btn{display:none}@page{size:A4;margin:1cm}}</style></head><body><button class="btn" onclick="window.print()">PRINT A4 SHEET</button><div class="grid" id="g"></div><script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"><\/script><script>function gen(){const ss=${JSON.stringify(res.students)},g=document.getElementById('g');if(typeof QRCode==='undefined'){setTimeout(gen,100);return;}ss.forEach(s=>{const b=document.createElement('div');b.className='box';const q=document.createElement('div');q.className='qr';const l=document.createElement('div');l.className='lbl';l.innerHTML=(s.name||'')+'<br>'+(s.dept||'')+' | '+(s.house||'');b.appendChild(q);b.appendChild(l);g.appendChild(b);try{new QRCode(q,{text:(s.name||'')+' | '+(s.dept||'')+' | '+(s.house||''),width:110,height:110});}catch(e){}});}gen();<\/script></body></html>`);
       pw.document.close();
     }
   </script>
