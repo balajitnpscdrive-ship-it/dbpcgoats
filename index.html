@@ -1,3 +1,41 @@
+
+
+Continue
+I've fixed that bug!
+
+The <select> dropdowns were using the browser's native light background for their options, making the default white text invisible. I added a new CSS rule explicitly forcing all <option> dropdown contents to have a dark background (#1a1a1a) with white text.
+
+If you refresh the app, your Staff list and Category dropdowns will now be clearly readable with white text on a sleek dark background!
+
+1
+TV.html
+report gives only in annualy but ineed also for every week
+I've upgraded the reporting engine!
+
+In the Admin Dashboard, you will now see two side-by-side buttons:
+
+📊 ANNUAL REPORT
+📅 WEEKLY REPORT
+How it works:
+Annual Report: Calculates points from the very beginning of the data log and prints the huge overall master report (exactly like before).
+Weekly Report: Filters the database starting from the most recent Thursday (since your DBPC cycle resets on Thursdays). It prints the exact same beautiful, multi-page format with department signatures, but only counts points awarded within the current week!
+I also updated Code.gs to properly process the periods during report generation. Remember to copy your updated Code.gs back over to Google Apps Script.
+
+2
+Code
+TV.html
+
+
+
+
+
+
+
+
+TV.html
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -491,7 +529,10 @@
       </div>
       <!-- ADMIN ACTIONS -->
       <div id="admin-actions" class="admin-section" style="display:none;">
-        <button class="btn-admin" style="color:var(--neon);border:2px solid var(--neon);font-size:14px;padding:16px;" onclick="generateReport()">📊 GENERATE ANNUAL REPORT</button>
+        <div style="display:flex; gap:10px; margin-bottom:10px;">
+          <button class="btn-admin" style="flex:1; color:var(--neon);border:2px solid var(--neon);font-size:12px;padding:12px;" onclick="generateReport('annually')">📊 ANNUAL REPORT</button>
+          <button class="btn-admin" style="flex:1; color:#00d4ff;border:2px solid #00d4ff;font-size:12px;padding:12px;" onclick="generateReport('weekly')">📅 WEEKLY REPORT</button>
+        </div>
         <button class="btn-admin" style="color:var(--accent);border:1px solid var(--accent);" onclick="toggleWebAppForm()">🔗 NEW WEB APP CONNECTION</button>
         <button class="btn-admin" style="color:#00ff88;border:1px solid #00ff88;" onclick="toggleBranding()">🎨 BRANDING DASHBOARD</button>
         <button class="btn-admin" style="color:white;border:1px dashed rgba(255,255,255,0.4);" onclick="prepareBulkPrint()">🖨️ BULK QR SYSTEM (A4)</button>
@@ -518,7 +559,7 @@
     /* ============================================================
        CONFIG
     ============================================================ */
-    const API = "https://script.google.com/macros/s/AKfycbwaKXmmAyaEzt_6q-XoC5_0u612kpPChrQ0av3OKuSWLO_lVhslM_TdEj-6XIyQHIwQMA/exec";
+    const API = "https://script.google.com/macros/s/AKfycby59wUNnqCFq5zJ1PN6ReifZCtIykq3n0HvcKEvrmJk4G-7xK54qTPaZJvsGkLI21zQLA/exec";
     /* ============================================================
        GLOBAL STATE
     ============================================================ */
@@ -994,13 +1035,14 @@
       pw.document.close();
     }
     /* ============================================================
-       📊 ANNUAL REPORT GENERATOR — Print-Ready
+       📊 REPORT GENERATOR — Print-Ready
     ============================================================ */
-    async function generateReport() {
-      showToast("📊 Generating Report...");
+    async function generateReport(period) {
+      showToast("📊 Generating " + (period === 'weekly' ? "Weekly" : "Annual") + " Report...");
       try {
-        const res = await api({ action: "getReportData" });
+        const res = await api({ action: "getReportData", period: period });
         if (!res.success) { showToast("❌ Report failed: " + (res.error || '')); return; }
+        const titleText = period === 'weekly' ? 'WEEKLY REPORT' : 'ANNUAL REPORT';
         const { overall, categoryResults, departments, houseConfig, categoryNames, images } = res;
         const logoUrl = images.logo || '';
         const rankLabels = ['🏆 WINNER', '🥈 RUNNER UP', '🥉 2ND RUNNER UP', '4TH PLACE'];
@@ -1036,7 +1078,7 @@
               ${logoUrl ? `<img src="${logoUrl}" class="college-logo">` : ''}
               <div class="college-name">DON BOSCO POLYTECHNIC COLLEGE</div>
               <div class="college-sub">Givers of All Talents Students</div>
-              <div class="report-title">G.O.A.T.S CHAMPIONSHIP — ANNUAL REPORT</div>
+              <div class="report-title">G.O.A.T.S CHAMPIONSHIP — ${titleText}</div>
               <div class="report-date">${today}</div>
             </div>
             ${standingsTable(overall, '🏆 OVERALL HOUSE CHAMPIONSHIP')}
