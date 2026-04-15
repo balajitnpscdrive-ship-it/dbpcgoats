@@ -1,41 +1,4 @@
 
-
-Continue
-I've fixed that bug!
-
-The <select> dropdowns were using the browser's native light background for their options, making the default white text invisible. I added a new CSS rule explicitly forcing all <option> dropdown contents to have a dark background (#1a1a1a) with white text.
-
-If you refresh the app, your Staff list and Category dropdowns will now be clearly readable with white text on a sleek dark background!
-
-1
-TV.html
-report gives only in annualy but ineed also for every week
-I've upgraded the reporting engine!
-
-In the Admin Dashboard, you will now see two side-by-side buttons:
-
-📊 ANNUAL REPORT
-📅 WEEKLY REPORT
-How it works:
-Annual Report: Calculates points from the very beginning of the data log and prints the huge overall master report (exactly like before).
-Weekly Report: Filters the database starting from the most recent Thursday (since your DBPC cycle resets on Thursdays). It prints the exact same beautiful, multi-page format with department signatures, but only counts points awarded within the current week!
-I also updated Code.gs to properly process the periods during report generation. Remember to copy your updated Code.gs back over to Google Apps Script.
-
-2
-Code
-TV.html
-
-
-
-
-
-
-
-
-TV.html
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
